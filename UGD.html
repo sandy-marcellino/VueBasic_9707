@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 shrink-to-fit=no" >
+    
+    <title>Unguided</title>
+    
+    <script src="vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="app">
+        <div class="header text-center py-3">
+            <h2 style="margin-top: 20px;"><b>Permainan Tebak Angka dari 1-10</b></h2>
+            <p style="margin-top: 200px; color: #cccccc;">kesempatan anda tinggal {{ kesempatan }}</p>
+        </div>
+
+        <div v-if="path == '.'">
+            <input  v-model="guess" type="number" name="input">
+            <button @click="checkInput()">Submit</button>
+        </div>
+
+        <div v-if="path == 'turunin'">
+            <input :disabled="shouldDisable" v-model="guess" type="number" name="input">
+            <button :disabled="shouldDisable" @click="checkInput()">Submit</button>
+            <p style="color: #e25822;" class="text-center py-3">Turunin Angkamu Lagi!</p>
+            <button :disabled="test" style ="margin-left: 47%;" @click="cobaLagi()">Tebak lagi</button>
+            
+        </div>
+
+        <div v-if="path == 'naikin'">
+            <input  :disabled="shouldDisable" v-model="guess" type="number" name="input">
+            <button :disabled="shouldDisable" @click="checkInput()">Submit</button>
+            <p style="color: #e25822;" class="text-center py-3">Naikin Angkamu Lagi!</p>
+            <button :disabled="test" style ="margin-left: 47%; " @click="cobaLagi()">Tebak lagi</button>
+        </div>
+
+        <div v-if="path == 'menang'">
+            <p style="color:#e25822" class="text-center py-3">Wah! Tebakanmu Benar!</p>
+            <p style="color: #e25822;" class="text-center py-3">Angka yang benar adalah {{ angka }}</p>
+            <button style = " margin-left: 48%; background-color: #e25822;" @click="reload()" >Play Again</button>
+        </div>
+
+        <div v-if="path == 'kalah'">
+                <p style="color: #e25822;" class="text-center py-3"> Game Over! Kesempatanmu habis!</p>
+                <p style="color: #e25822;" class="text-center py-3">Angka yang benar adalah {{ angka }}</p>
+                <button style = " margin-left: 48%; background-color:#e25822" @click="reload()">Play Again</button>
+        </div>
+
+        <footer class="page-footer py-1">
+                <h5 style="margin-top: 0%;" class="text-uppercase text-center py-3">{{nama}} | {{npm}} | {{kelas}}</h5>
+        </footer>
+        
+    </div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            nama: "Sandy Marcellino",
+            npm: "180709707",
+            kelas: "D",
+            angka: -1,
+            kesempatan: 3,
+            path: '.',
+            guess : '',
+            shouldDisable: true,
+            test: false
+        },
+        
+        methods: {
+            cobaLagi: function(){
+                this.shouldDisable=false
+                this.test=true
+                
+            },
+          setRandNumber: function() {
+                do {
+                this.angka = Math.ceil(Math.random()*10);
+                } while (this.angka<1 || this.angka>10);
+                console.log(this.angka);
+            },
+            checkInput : function(input) {
+                if (this.angka == -1)
+                    this.setRandNumber();			  
+                    this.shouldDisable=true
+                    this.test=false
+                let num = parseInt(this.guess);
+                this.guess = '';
+                num=Math.ceil(num);
+
+                if (num>=1 && num<=10) {
+                this.kesempatan--;
+                if (num == this.angka) {
+                    this.path = "menang";
+                }
+                else {
+                    if (this.kesempatan==0) {
+                    this.path = "kalah";
+                    
+                    }
+                    else {
+                    if (num>this.angka) {
+                        this.path = "turunin";
+                        };
+                    if (num<this.angka) {
+                        this.path ="naikin";
+                        };
+                    }
+                };
+                
+            }
+            else {
+                alert('Angka hanya 1-10');
+                
+            }
+            
+        },
+        showNumberToGuess: function() {
+                alert('The number to guess is ' + this.angka);
+        },
+        reload: function() {
+            this.path = ".";
+            this.setRandNumber();
+            this.kesempatan = 3;
+        }      
+        }
+    });
+    
+</script>
+</html>
+<style>
+    body{
+        background-image: url('3.jpg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size:1600px 780px;
+        
+    }
+
+    footer{
+        background-color: transparent;
+        color: #e25822;
+        bottom:0;
+        width:100%;
+        height:70px;
+        position: absolute;
+    }
+
+    input{
+        margin-left: 43%;
+        
+        background-color: #535353;
+    }
+
+    button{
+        margin-left: 48%;
+        border: none;
+        display: inline-block;
+        margin: 6px 4px;
+        border-radius: 10px;
+        background-color: #535353;
+    }
+</style>
